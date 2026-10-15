@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Up — Gamified Productivity Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="crt-enabled">
+  <!-- CRT Scanlines & Screen Texture Overlay -->
+  <div class="crt-overlay" id="crtOverlay" aria-hidden="true"></div>
+  <div class="vignette-overlay" aria-hidden="true"></div>
+
+  <!-- Main Container -->
+  <div class="app-wrapper" id="appWrapper">
+
+    <!-- Top Ticker / Marquee Banner -->
+    <aside class="zine-tape-top" aria-label="System Marquee">
+      <div class="ticker-track">
+        <span>*** LEVEL UP v1.0.0 *** STRICT MONOCHROME SYSTEM *** OBJECT-ORIENTED HABIT FORGE *** NO CLOUD REQUIRED *** 100 XP = LEVEL UP *** PROTECT YOUR HP *** INSERT COIN TO PLAY ***</span>
+        <span>*** LEVEL UP v1.0.0 *** STRICT MONOCHROME SYSTEM *** OBJECT-ORIENTED HABIT FORGE *** NO CLOUD REQUIRED *** 100 XP = LEVEL UP *** PROTECT YOUR HP *** INSERT COIN TO PLAY ***</span>
+      </div>
+    </aside>
+
+    <!-- Header Section -->
+    <header class="main-header brutalist-panel">
+      <div class="header-top-bar">
+        <div class="badge-tag tape-effect">SYSTEM://STANDALONE_RPG</div>
+        <div class="date-badge" id="systemDateDisplay">DATE: 2026-10-13</div>
+        <div class="header-actions">
+          <div class="theme-picker-wrapper">
+            <button id="themePickerBtn" class="brutalist-btn btn-sm theme-picker-btn" title="Change color theme">🎨 THEME</button>
+            <ul class="theme-dropdown" id="themeDropdown">
+              <li data-theme="default" class="active-theme">
+                <span class="theme-swatch"><span style="background:#000"></span><span style="background:#888"></span><span style="background:#fff"></span></span>
+                Monochrome
+              </li>
+              <li data-theme="cp2077">
+                <span class="theme-swatch"><span style="background:#0a0a0c"></span><span style="background:#fcee09"></span><span style="background:#ff003c"></span></span>
+                Cyberpunk 2077 ⚡
+              </li>
+              <li data-theme="cyberpunk">
+                <span class="theme-swatch"><span style="background:#0a0a1a"></span><span style="background:#00fff2"></span><span style="background:#ff00ff"></span></span>
+                Cyberpunk Neon
+              </li>
+              <li data-theme="terminal">
+                <span class="theme-swatch"><span style="background:#001100"></span><span style="background:#00ff00"></span><span style="background:#004400"></span></span>
+                Retro Terminal
+              </li>
+              <li data-theme="ember">
+                <span class="theme-swatch"><span style="background:#1a0e05"></span><span style="background:#ff8c00"></span><span style="background:#ff4500"></span></span>
+                Sunset Ember
+              </li>
+              <li data-theme="frost">
+                <span class="theme-swatch"><span style="background:#0a1a2e"></span><span style="background:#2090ff"></span><span style="background:#e8f0fa"></span></span>
+                Arctic Frost
+              </li>
+              <li data-theme="bloodmoon">
+                <span class="theme-swatch"><span style="background:#1a0505"></span><span style="background:#cc0000"></span><span style="background:#ff0040"></span></span>
+                Blood Moon
+              </li>
+              <li data-theme="synthwave">
+                <span class="theme-swatch"><span style="background:#0f0728"></span><span style="background:#ff2d95"></span><span style="background:#00d4ff"></span></span>
+                Synthwave
+              </li>
+            </ul>
+          </div>
+          <button id="toggleCrtBtn" class="brutalist-btn btn-sm" title="Toggle retro CRT scanlines">CRT: ON</button>
+          <button id="editPlayerNameBtn" class="brutalist-btn btn-sm" title="Change Hero Name">RENAME</button>
+        </div>
+      </div>
+
+      <div class="header-content">
+        <div class="title-cluster">
+          <h1 class="glitch-title" data-text="Level Up">Level Up</h1>
+          <p class="header-tagline">Gamified productivity tracker</p>
+        </div>
+        <div class="hero-id-card brutalist-card">
+          <div class="hero-id-header">
+            <span class="pixel-icon">⚔</span>
+            <span class="hero-label">PLAYER IDENTITY</span>
+            <span class="pixel-icon">🛡</span>
+          </div>
+          <div class="hero-name-row">
+            <span class="player-name-val" id="playerNameDisplay">PLAYER 1</span>
+            <span class="hero-rank-tag" id="playerRankDisplay">NOVICE SLACKER</span>
+          </div>
+          <div class="hero-meta-row">
+            <span>DAYS ACTIVE: <strong id="daysActiveDisplay">1</strong></span>
+            <span>STATUS: <strong id="playerStatusDisplay">ALIVE &amp; GRINDING</strong></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Player HUD Section -->
+    <section class="hud-section brutalist-panel" aria-label="Player Vital Stats">
+      <div class="panel-header-ribbon">
+        <h2>[ PLAYER VITAL METRICS ]</h2>
+        <span class="hud-indicator">// REALTIME STATS //</span>
+      </div>
+
+      <div class="bars-container">
+        <!-- Health Points Bar -->
+        <div class="stat-bar-block hp-block brutalist-card">
+          <div class="bar-title-row">
+            <span class="bar-label">
+              <span class="symbol-tag heart-tag">♥</span> HP [HEALTH POINTS]
+            </span>
+            <span class="bar-numeric" id="hpNumericDisplay">100 / 100</span>
+          </div>
+          <div class="meter-frame">
+            <div class="meter-bar hp-bar" id="hpMeterBar" style="width: 100%;">
+              <div class="meter-pattern"></div>
+            </div>
+          </div>
+          <div class="bar-subtext">
+            <span>PENALTY DRAIN IF TASKS ARE MISSED</span>
+            <span class="critical-warning" id="hpWarningTag" style="display: none;">! CRITICAL HP !</span>
+          </div>
+        </div>
+
+        <!-- Experience Points Bar -->
+        <div class="stat-bar-block xp-block brutalist-card">
+          <div class="bar-title-row">
+            <span class="bar-label">
+              <span class="symbol-tag star-tag">★</span> XP [EXPERIENCE POINTS]
+            </span>
+            <span class="bar-numeric" id="xpNumericDisplay">0 / 100</span>
+          </div>
+          <div class="meter-frame">
+            <div class="meter-bar xp-bar" id="xpMeterBar" style="width: 0%;">
+              <div class="meter-pattern"></div>
+            </div>
+          </div>
+          <div class="bar-subtext">
+            <span>100 XP = 1 LEVEL UP + FULL HP RESTORE</span>
+            <span class="xp-next-tag" id="xpToNextTag">100 XP TO LEVEL UP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="metrics-grid">
+        <div class="metric-card brutalist-card tilt-left">
+          <div class="metric-title">CURRENT LEVEL</div>
+          <div class="metric-value-huge" id="levelDisplay">1</div>
+          <div class="metric-sub" id="totalXpDisplay">TOTAL XP: 0</div>
+        </div>
+        <div class="metric-card brutalist-card tilt-right">
+          <div class="metric-title">COMPLETED QUESTS</div>
+          <div class="metric-value-huge" id="totalTasksCompletedDisplay">0</div>
+          <div class="metric-sub">VICTORIES WON</div>
+        </div>
+        <div class="metric-card brutalist-card tilt-left">
+          <div class="metric-title">BEST STREAK</div>
+          <div class="metric-value-huge" id="bestStreakDisplay">0🔥</div>
+          <div class="metric-sub" id="streakBonusDisplay">BONUS: 1.0x XP</div>
+        </div>
+        <div class="metric-card brutalist-card tilt-right">
+          <div class="metric-title">ACTIVE QUESTS</div>
+          <div class="metric-value-huge" id="activeTasksCountDisplay">0</div>
+          <div class="metric-sub" id="pendingPenaltiesDisplay">PENALTIES AT RISK</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics & Battle Telemetry Section -->
+    <section class="telemetry-section brutalist-panel" id="telemetrySection" aria-label="Battle Analytics & Telemetry">
+      <div class="panel-header-ribbon">
+        <div class="telemetry-header-title">
+          <h2>[ 📊 HERO TELEMETRY &amp; BATTLE CHARTS ]</h2>
+          <span class="hud-indicator">// REALTIME PERFORMANCE CHARTS &amp; XP RADAR //</span>
+        </div>
+        <div class="telemetry-controls">
+          <button id="toggleTelemetryBtn" class="brutalist-btn btn-sm" title="Toggle telemetry graphs view">CHARTS: EXPANDED</button>
+        </div>
+      </div>
+
+      <div class="telemetry-body" id="telemetryBody">
+        <!-- Upper Charts Row: 7-Day XP Trend + RPG Combat Radar -->
+        <div class="telemetry-grid">
+          <!-- Chart 1: 7-Day XP & Battle Activity Bar Chart -->
+          <div class="chart-card brutalist-card">
+            <div class="chart-card-header">
+              <div>
+                <span class="chart-badge">TIMELINE</span>
+                <h3 class="chart-title">7-DAY XP MOMENTUM</h3>
+              </div>
+              <span class="chart-stat-badge" id="chartWeeklyXpBadge">+0 XP THIS WEEK</span>
+            </div>
+            <div class="chart-canvas-container">
+              <canvas id="xpBarChartCanvas" width="460" height="210"></canvas>
+            </div>
+            <div class="chart-legend-row">
+              <span class="chart-legend-item"><span class="legend-swatch legend-primary"></span> XP GAINED</span>
+              <span class="chart-legend-item"><span class="legend-swatch legend-dashed"></span> DAILY GOAL (50 XP)</span>
+              <span class="chart-legend-item" id="chartDailyAvgLabel">AVG: 0 XP/DAY</span>
+            </div>
+          </div>
+
+          <!-- Chart 2: RPG Attribute Hexagon / Radar Chart -->
+          <div class="chart-card brutalist-card">
+            <div class="chart-card-header">
+              <div>
+                <span class="chart-badge">HERO RADAR</span>
+                <h3 class="chart-title">COMBAT ATTRIBUTES</h3>
+              </div>
+              <span class="chart-stat-badge" id="chartCombatRatingBadge">COMBAT RATING: B</span>
+            </div>
+            <div class="chart-canvas-container radar-container">
+              <canvas id="radarChartCanvas" width="340" height="210"></canvas>
+            </div>
+            <div class="radar-attribute-chips" id="radarAttributeChips">
+              <!-- Rendered dynamically: DIS, PUN, CON, VIT, POW -->
+            </div>
+
+            <!-- Attribute Codex / Glossary -->
+            <div class="attribute-glossary" id="attributeGlossary">
+              <div class="glossary-header">
+                <span class="glossary-title">[ ATTRIBUTE CODEX // HERO SPEC ]</span>
+                <button class="codex-toggle-btn" id="toggleCodexBtn" type="button" title="Toggle Attribute Explanations">[- COLLAPSE]</button>
+              </div>
+              <div class="glossary-list" id="glossaryList">
+                <div class="glossary-item">
+                  <span class="glossary-badge">DIS</span>
+                  <div class="glossary-text">
+                    <strong>DIS (Discipline):</strong> Measures your overall task completion rate and adherence to daily routines.
+                  </div>
+                </div>
+                <div class="glossary-item">
+                  <span class="glossary-badge">PUN</span>
+                  <div class="glossary-text">
+                    <strong>PUN (Punctuality):</strong> Tracks how reliably you complete your "Deadline" quests before they become overdue.
+                  </div>
+                </div>
+                <div class="glossary-item">
+                  <span class="glossary-badge">CON</span>
+                  <div class="glossary-text">
+                    <strong>CON (Consistency):</strong> Reflects your ability to maintain unbroken "Habit" streaks without skipping days.
+                  </div>
+                </div>
+                <div class="glossary-item">
+                  <span class="glossary-badge">VIT</span>
+                  <div class="glossary-text">
+                    <strong>VIT (Vitality):</strong> Represents your Health Point (HP) management and how well you avoid offline penalties.
+                  </div>
+                </div>
+                <div class="glossary-item">
+                  <span class="glossary-badge">POW</span>
+                  <div class="glossary-text">
+                    <strong>POW (Power):</strong> Likely tied to your XP momentum, measuring how many high-value tasks you are crushing to level up.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lower Charts Row: Quest Distribution Donut + 28-Day Habit Heatmap -->
+        <div class="telemetry-grid telemetry-grid-secondary">
+          <!-- Chart 3: Quest Ledger Composition Donut -->
+          <div class="chart-card brutalist-card">
+            <div class="chart-card-header">
+              <div>
+                <span class="chart-badge">RATIO</span>
+                <h3 class="chart-title">QUEST DISTRIBUTION</h3>
+              </div>
+              <span class="chart-stat-badge" id="chartClearRateBadge">CLEAR: 0%</span>
+            </div>
+            <div class="donut-layout">
+              <div class="chart-canvas-container donut-container">
+                <canvas id="donutChartCanvas" width="260" height="260"></canvas>
+              </div>
+              <div class="donut-breakdown-list" id="donutBreakdownList">
+                <!-- Rendered dynamically: Daily, Deadline, Habit counts & percentages -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart 4: 28-Day Habit Streak Activity Heatmap -->
+          <div class="chart-card brutalist-card">
+            <div class="chart-card-header">
+              <div>
+                <span class="chart-badge">HEATMAP</span>
+                <h3 class="chart-title">28-DAY HABIT MATRIX</h3>
+              </div>
+              <span class="chart-stat-badge" id="chartHeatmapActiveDaysBadge">0/28 ACTIVE</span>
+            </div>
+            <div class="heatmap-matrix-wrapper">
+              <div class="heatmap-days-header">
+                <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+              </div>
+              <div class="heatmap-grid" id="habitHeatmapGrid">
+                <!-- Rendered dynamically: 28 day squares -->
+              </div>
+            </div>
+            <div class="heatmap-footer">
+              <span class="heatmap-legend-label">LESS ACTIVE</span>
+              <div class="heatmap-scale-swatches">
+                <span class="scale-dot lvl-0" title="0 tasks"></span>
+                <span class="scale-dot lvl-1" title="1 task"></span>
+                <span class="scale-dot lvl-2" title="2 tasks"></span>
+                <span class="scale-dot lvl-3" title="3+ tasks"></span>
+              </div>
+              <span class="heatmap-legend-label">MORE ACTIVE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls & Action Ribbon -->
+    <section class="action-ribbon brutalist-panel">
+      <div class="ribbon-tabs" role="tablist">
+        <button class="tab-btn brutalist-btn active" data-tab="ALL" role="tab" aria-selected="true">
+          [ALL QUESTS] <span class="tab-count" id="countAll">(0)</span>
+        </button>
+        <button class="tab-btn brutalist-btn" data-tab="DAILY" role="tab" aria-selected="false">
+          [DAILY] <span class="tab-count" id="countDaily">(0)</span>
+        </button>
+        <button class="tab-btn brutalist-btn" data-tab="DEADLINE" role="tab" aria-selected="false">
+          [DEADLINES] <span class="tab-count" id="countDeadline">(0)</span>
+        </button>
+        <button class="tab-btn brutalist-btn" data-tab="HABIT" role="tab" aria-selected="false">
+          [HABITS] <span class="tab-count" id="countHabit">(0)</span>
+        </button>
+      </div>
+
+      <div class="ribbon-actions">
+        <button id="openAddTaskBtn" class="brutalist-btn btn-primary">
+          <span class="btn-icon">+</span> FORGE QUEST
+        </button>
+        <button id="simulateDayBtn" class="brutalist-btn btn-secondary" title="Advance calendar by 1 day to test offline penalty calculation">
+          <span class="btn-icon">⚡</span> PASS 24H (TEST)
+        </button>
+        <button id="healPotionBtn" class="brutalist-btn btn-secondary" title="Use 50 XP to drink a health potion and restore 35 HP">
+          <span class="btn-icon">🧪</span> POTION (+35 HP)
+        </button>
+      </div>
+    </section>
+
+    <!-- Category Explainer Notice Ribbon -->
+    <div class="category-banner brutalist-card" id="categoryExplainer">
+      <div class="category-banner-icon">[!]</div>
+      <div class="category-banner-text" id="categoryExplainerText">
+        SHOWING ALL QUESTS: Daily routines, firm deadlines, and compounding habit streaks.
+      </div>
+    </div>
+
+    <!-- Add Task Form Modal / Collapsible Drawer -->
+    <section class="modal-backdrop" id="addTaskModal" style="display: none;">
+      <div class="modal-window brutalist-card">
+        <div class="modal-header">
+          <h3 class="modal-title">/// FORGE NEW QUEST</h3>
+          <button class="close-modal-btn brutalist-btn btn-sm" id="closeAddTaskBtn">&times;</button>
+        </div>
+
+        <form id="addTaskForm" class="brutalist-form">
+          <!-- Task Type Selector -->
+          <div class="form-group">
+            <label class="form-label">QUEST CLASSIFICATION (CLASS TYPE):</label>
+            <div class="type-selector-group">
+              <label class="type-radio-label">
+                <input type="radio" name="taskType" value="DAILY" checked>
+                <span class="type-radio-btn">DAILY TASK<br><small>-10 HP IF MISSED</small></span>
+              </label>
+              <label class="type-radio-label">
+                <input type="radio" name="taskType" value="DEADLINE">
+                <span class="type-radio-btn">DEADLINE<br><small>-(5 + 3*DAYS) HP</small></span>
+              </label>
+              <label class="type-radio-label">
+                <input type="radio" name="taskType" value="HABIT">
+                <span class="type-radio-btn">HABIT STREAK<br><small>UP TO 3x MULTIPLIER</small></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Task Name -->
+          <div class="form-group">
+            <label for="taskNameInput" class="form-label">QUEST TITLE:</label>
+            <input type="text" id="taskNameInput" class="brutalist-input" placeholder="e.g. Implement polymorphic Java interfaces..." required maxlength="60">
+          </div>
+
+          <!-- Task Description -->
+          <div class="form-group">
+            <label for="taskDescInput" class="form-label">QUEST LORE &amp; OBJECTIVES (OPTIONAL):</label>
+            <textarea id="taskDescInput" class="brutalist-input" rows="2" placeholder="Explain the quest details or victory condition..." maxlength="200"></textarea>
+          </div>
+
+          <div class="form-row">
+            <!-- XP Reward -->
+            <div class="form-group half-width">
+              <label for="taskXpInput" class="form-label">XP REWARD (5 - 100):</label>
+              <div class="xp-input-stepper">
+                <input type="number" id="taskXpInput" class="brutalist-input" value="25" min="5" max="100" step="5" required>
+                <div class="quick-xp-buttons">
+                  <button type="button" class="btn-chip" data-xp="10">+10</button>
+                  <button type="button" class="btn-chip" data-xp="25">+25</button>
+                  <button type="button" class="btn-chip" data-xp="50">+50</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deadline Field (Conditionally shown for DEADLINE) -->
+            <div class="form-group half-width" id="deadlineContainer" style="display: none;">
+              <label for="taskDeadlineInput" class="form-label">DUE DATE (DEADLINE):</label>
+              <input type="date" id="taskDeadlineInput" class="brutalist-input">
+            </div>
+          </div>
+
+          <!-- Type dynamic description note -->
+          <div class="type-rules-note brutalist-card" id="typeRulesNote">
+            <strong>DAILY TASK RULES:</strong> Resets every midnight. If left incomplete at the end of the day, player suffers a direct 10 HP penalty.
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="brutalist-btn btn-secondary" id="cancelAddTaskBtn">CANCEL</button>
+            <button type="submit" class="brutalist-btn btn-primary" id="submitAddTaskBtn">FORGE QUEST &gt;&gt;</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Task List Section -->
+    <main class="tasks-section brutalist-panel">
+      <div class="tasks-header-bar">
+        <h2 id="currentTabHeading">[ ACTIVE QUEST LOG // ALL ]</h2>
+        <div class="tasks-controls">
+          <label class="sort-label">
+            SORT:
+            <select id="taskSortSelect" class="brutalist-select">
+              <option value="NEWEST">LATEST CREATED</option>
+              <option value="XP_DESC">HIGHEST XP</option>
+              <option value="XP_ASC">LOWEST XP</option>
+              <option value="STATUS">PENDING FIRST</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- Task Cards List -->
+      <div class="tasks-container" id="tasksContainer">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state brutalist-card" id="emptyState" style="display: none;">
+        <pre class="ascii-art-empty" aria-hidden="true">
+   (\_/)
+   (x.x)  [ NO ACTIVE QUESTS FOUND IN THIS LOG ]
+   (")_(")
+        </pre>
+        <h3 class="empty-state-title">YOUR LOG IS COMPLETELY EMPTY!</h3>
+        <p class="empty-state-text">No quests forged yet. Inaction breeds decay! Summon a quest to begin farming XP and leveling up.</p>
+        <button class="brutalist-btn btn-primary" id="emptyStateAddBtn">+ FORGE YOUR FIRST QUEST</button>
+      </div>
+    </main>
+
+    <!-- Footer Controls & Persistence Panel -->
+    <footer class="main-footer brutalist-panel">
+      <div class="footer-buttons-row">
+        <button id="saveGameBtn" class="brutalist-btn footer-btn" title="Save game to local browser storage">
+          <span class="btn-icon">💾</span> SAVE GAME
+        </button>
+        <button id="loadGameBtn" class="brutalist-btn footer-btn" title="Reload saved state from local storage">
+          <span class="btn-icon">📁</span> LOAD GAME
+        </button>
+        <button id="exportJsonBtn" class="brutalist-btn footer-btn" title="Export save game JSON file">
+          <span class="btn-icon">📥</span> EXPORT SAVE
+        </button>
+        <label class="brutalist-btn footer-btn file-input-label" title="Import save game JSON file">
+          <span class="btn-icon">📤</span> IMPORT SAVE
+          <input type="file" id="importJsonFileInput" accept=".json" style="display: none;">
+        </label>
+        <button id="newGameBtn" class="brutalist-btn footer-btn btn-danger" title="Wipe current save and reset game">
+          <span class="btn-icon">♻</span> NEW GAME
+        </button>
+      </div>
+
+      <div class="footer-meta-row">
+        <div class="system-info">
+          LEVEL UP v1.0.0 // STANDALONE BRUTALIST RUNTIME // LOCALSTORAGE PERSISTENT ENGINE // JAVA SE OOP MIRROR
+        </div>
+        <div class="keyboard-hints">
+          HINTS: [N] NEW QUEST | [1-4] TABS | [ESC] CLOSE MODALS
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- End .app-wrapper -->
+
+  <!-- Floating Toast Notifications Container -->
+  <div class="toast-shelf" id="toastShelf" aria-live="polite"></div>
+
+  <!-- LEVEL UP Celebration Modal -->
+  <div class="modal-backdrop celebration-backdrop" id="levelUpModal" style="display: none;">
+    <div class="modal-window celebration-window brutalist-card">
+      <div class="celebration-glitch">★ ★ ★</div>
+      <h2 class="level-up-title glitch-title" data-text="LEVEL UP!">LEVEL UP!</h2>
+      <pre class="ascii-trophy" aria-hidden="true">
+       ___________
+      '._==_==_=_.'
+      .-\:      /-.
+     | (|:.     |) |
+      '-|:.     |-'
+        \::.    /
+         '::. .'
+           ) (
+         _.' '._
+        `"""""""`
+      </pre>
+      <div class="level-up-body">
+        <p class="celebration-badge">YOU HAVE ATTAINED <span id="celebrationLevelNum">LEVEL 2</span>!</p>
+        <p class="celebration-rank" id="celebrationRankTitle">RANK: APPRENTICE GRINDER</p>
+        <p class="celebration-perk">REWARD: YOUR HEALTH (HP) HAS BEEN FULLY RESTORED TO 100/100!</p>
+      </div>
+      <button class="brutalist-btn btn-primary btn-huge" id="closeLevelUpBtn">CLAIM GLORY &amp; CONTINUE &gt;&gt;</button>
+    </div>
+  </div>
+
+  <!-- Offline Damage Report Modal -->
+  <div class="modal-backdrop damage-report-backdrop" id="damageReportModal" style="display: none;">
+    <div class="modal-window brutalist-card damage-window">
+      <div class="modal-header">
+        <h3 class="modal-title">☠ OFFLINE TIME PENALTY REPORT</h3>
+        <button class="close-modal-btn brutalist-btn btn-sm" id="closeDamageReportBtn">&times;</button>
+      </div>
+      <div class="damage-content">
+        <p class="damage-intro">
+          WELCOME BACK, HERO. While you were offline, time marched on relentlessly.
+        </p>
+        <div class="damage-stats-box brutalist-card">
+          <div class="damage-row">
+            <span>DAYS PASSED OFFLINE:</span>
+            <strong id="reportDaysPassed">1 DAY(S)</strong>
+          </div>
+          <div class="damage-row">
+            <span>DAILY TASKS MISSED:</span>
+            <strong id="reportDailiesMissed">0 (-0 HP)</strong>
+          </div>
+          <div class="damage-row">
+            <span>OVERDUE DEADLINES:</span>
+            <strong id="reportDeadlinesMissed">0 (-0 HP)</strong>
+          </div>
+          <div class="damage-row">
+            <span>BROKEN HABIT STREAKS:</span>
+            <strong id="reportHabitsBroken">0 (-0 HP)</strong>
+          </div>
+          <div class="damage-row total-damage-row">
+            <span>TOTAL HEALTH DRAINED:</span>
+            <strong id="reportTotalDamage">-0 HP</strong>
+          </div>
+          <div class="damage-row">
+            <span>REMAINING HEALTH:</span>
+            <strong id="reportRemainingHp">100 / 100 HP</strong>
+          </div>
+        </div>
+        <p class="damage-flavor" id="reportFlavorText">
+          "Pain is the premier teacher of consistency."
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="brutalist-btn btn-primary" id="ackDamageReportBtn">ACKNOWLEDGE CONSEQUENCES &gt;&gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over / Fainted Modal -->
+  <div class="modal-backdrop gameover-backdrop" id="gameOverModal" style="display: none;">
+    <div class="modal-window brutalist-card gameover-window">
+      <h2 class="gameover-title">☠ YOU HAVE FAINTED! ☠</h2>
+      <pre class="ascii-skull" aria-hidden="true">
+       .---.
+      /     \
+     | () () |
+      \  ^  /
+       |||||
+      </pre>
+      <p class="gameover-text">
+        YOUR HEALTH POINTS HIT 0! Procrastination has claimed your mortal soul. 
+        Will you rise from the grave with a penalty phoenix revival, or surrender to oblivion?
+      </p>
+      <div class="gameover-actions">
+        <button class="brutalist-btn btn-primary btn-huge" id="revivePlayerBtn">
+          REVIVE (+50 HP / SACRIFICE 25 XP)
+        </button>
+        <button class="brutalist-btn btn-danger" id="faintedNewGameBtn">
+          ACCEPT DEFEAT &amp; RESET (NEW GAME)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player Rename Modal -->
+  <div class="modal-backdrop" id="renameModal" style="display: none;">
+    <div class="modal-window brutalist-card rename-window">
+      <div class="modal-header">
+        <h3 class="modal-title">/// EDIT HERO IDENTITY</h3>
+        <button class="close-modal-btn brutalist-btn btn-sm" id="closeRenameBtn">&times;</button>
+      </div>
+      <div class="form-group" style="margin-top: 15px;">
+        <label for="renamePlayerInput" class="form-label">ENTER NEW HERO NAME:</label>
+        <input type="text" id="renamePlayerInput" class="brutalist-input" maxlength="24" placeholder="e.g. TASK_SLAYER_99">
+      </div>
+      <div class="modal-footer">
+        <button class="brutalist-btn btn-secondary" id="cancelRenameBtn">CANCEL</button>
+        <button class="brutalist-btn btn-primary" id="saveRenameBtn">CONFIRM RENAME</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
